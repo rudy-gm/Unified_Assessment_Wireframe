@@ -10,14 +10,31 @@ function setScenario(s,btn){
   activeScenario=s;
   document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  // Clear all answers and reset scored UI
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  hasScored=false;
+  document.querySelectorAll('.question-card').forEach(card=>card.classList.remove('scored'));
+  document.querySelectorAll('.score-btn').forEach(b=>b.className='score-btn');
+  document.querySelectorAll('.micro-feedback').forEach(mf=>{mf.textContent='';mf.className='micro-feedback';});
+  const rpResults=document.getElementById('rpResults');
+  const rpInsights=document.getElementById('rpInsights');
+  if(rpResults){rpResults.classList.remove('visible');rpResults.style.display='none';}
+  if(rpInsights) rpInsights.style.display='';
   // Highlight/dim question cards based on scenario
   document.querySelectorAll('.question-card').forEach(card=>{
     const scenarios=card.dataset.scenarios?card.dataset.scenarios.split(','):['all'];
     const match=s==='all'||scenarios.includes(s);
     card.style.opacity=match?'1':'0.35';
     card.style.transition='opacity 0.3s';
+    card.style.pointerEvents=match?'':'none';
   });
-  refreshLiveSignal();
+  refreshAll();
+}
+
+function qInScenario(q){
+  if(activeScenario==='all') return true;
+  const sc=q.scenarios||['all'];
+  return sc.includes(activeScenario)||sc.includes('all');
 }
 
 // ═══════════════════════════════════════════
@@ -131,16 +148,16 @@ function refreshLiveSignal(qid,val){
 // CALCULATIONS
 // ═══════════════════════════════════════════
 function activeQs(){
-  return GL.flatMap(g=>g.domains.flatMap(d=>d.qs.filter(q=>scanMode==='simple'?q.simple:true)));
+  return GL.flatMap(g=>g.domains.flatMap(d=>d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q))));
 }
 function gScore(gid){
   const g=GL.find(x=>x.id===gid);
-  const qs=g.domains.flatMap(d=>d.qs.filter(q=>scanMode==='simple'?q.simple:true)).filter(q=>answers[q.id]);
+  const qs=g.domains.flatMap(d=>d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q))).filter(q=>answers[q.id]);
   if(!qs.length) return null;
   return qs.reduce((a,q)=>a+answers[q.id],0)/qs.length;
 }
 function dScore(d){
-  const qs=d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&answers[q.id]);
+  const qs=d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q)&&answers[q.id]);
   if(!qs.length) return null;
   return qs.reduce((a,q)=>a+answers[q.id],0)/qs.length;
 }
@@ -205,7 +222,7 @@ function refreshGBars(){
 
 function refreshProgress(){
   GL.forEach(g=>{
-    const qs=g.domains.flatMap(d=>d.qs.filter(q=>scanMode==='simple'?q.simple:true));
+    const qs=g.domains.flatMap(d=>d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q)));
     const total=qs.length,done=qs.filter(q=>answers[q.id]).length;
     const pill=document.getElementById('gpill-'+g.id);
     const bar=document.getElementById('gpbar-'+g.id);
@@ -275,7 +292,7 @@ function refreshGaps(){
   const list=document.getElementById('gapsList');
   if(!list) return;
   const gaps=[];
-  GL.forEach(g=>g.domains.forEach(d=>d.qs.filter(q=>scanMode==='simple'?q.simple:true).forEach(q=>{const s=answers[q.id];if(s&&s<=3) gaps.push({g,q,s});})));
+  GL.forEach(g=>g.domains.forEach(d=>d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q)).forEach(q=>{const s=answers[q.id];if(s&&s<=3) gaps.push({g,q,s});})));
   gaps.sort((a,b)=>a.s-b.s);
   if(!gaps.length){list.innerHTML='<p class="empty-note">Priority gaps appear here as you score questions ≤ 3</p>';return;}
   list.innerHTML=gaps.slice(0,12).map(({g,q,s})=>{
