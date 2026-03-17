@@ -1,0 +1,17 @@
+/* ═══════ TOKENS ═══════ */
+:root{
+  --teal:#007d8a; --teal-mid:#009aaa; --teal-light:#00b8c8;
+  --teal-xl:#e6f7f9; --teal-pale:#f0fbfc; --teal-b:rgba(0,125,138,.18);
+  --ink:#1a2c2f; --ink-mid:#2e4a4f; --body:#4a6366; --muted:#7a9598;
+  --faint:#b8cdd0; --line:#e2eced; --bg:#f7fafa; --white:#fff;
+  --s1:#c94040; --s2:#c97a30; --s3:#b8a828; --s4:#3a9e68; --s5:#009aaa;
+  --sh-sm:0 1px 4px rgba(0,80,90,.07);
+  --sh-md:0 4px 20px rgba(0,80,90,.10);
+  --sh-lg:0 12px 48px rgba(0,80,90,.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:15px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'DM Serif Display',serif;line-height:1.1;}
+p{color:var(--body);}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;}
