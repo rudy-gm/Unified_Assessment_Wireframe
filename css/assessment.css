@@ -65,9 +65,9 @@
 .question-card:hover{background:var(--teal-pale);}
 
 /* Tooltip */
-.q-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px;}
+.q-header{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:4px;}
 .q-ref{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.07em;}
-.q-why-btn{font-size:9px;color:var(--teal);background:var(--teal-xlight);border:1px solid var(--teal-border);padding:2px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;transition:all 0.15s;}
+.q-why-btn{font-size:13px;color:var(--teal);background:var(--teal-xlight);border:1px solid var(--teal-border);padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all 0.15s;}
 .q-why-btn:hover{background:var(--teal-xlight);color:var(--teal-mid);}
 .q-tooltip{display:none;margin-top:6px;padding:10px 12px;background:var(--ink);color:rgba(255,255,255,0.75);font-size:11px;line-height:1.6;border-left:3px solid var(--teal-light);}
 .q-tooltip.open{display:block;}
