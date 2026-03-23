@@ -131,18 +131,49 @@ window.addEventListener('scroll', () => {
   document.getElementById('mainNav')?.classList.toggle('scrolled', window.scrollY > 20);
 });
 
-// Active nav link on scroll
-const navSections = ['challenge-section','reality-section','transform-section','value-section'];
-window.addEventListener('scroll', () => {
-  let current = '';
-  navSections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top < 100) current = id;
+// Active nav link + narrative section tracker on scroll
+const STORY_SECTIONS = [
+  { id:'challenge-section', label:'The Challenge' },
+  { id:'siloed-section', label:'Siloed Risk' },
+  { id:'reality-section', label:'Execution Reality' },
+  { id:'usecase-section', label:'Use Cases' },
+  { id:'approach-section', label:'Our Approach' },
+  { id:'scan-section', label:'Start Assessment' },
+];
+
+function refreshStoryTracker() {
+  let currentIdx = -1;
+  STORY_SECTIONS.forEach((section, idx) => {
+    const el = document.getElementById(section.id);
+    if (el && el.getBoundingClientRect().top <= 100) currentIdx = idx;
   });
+  const bottomReached = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 2);
+  if (bottomReached) currentIdx = STORY_SECTIONS.length - 1;
+
+  const currentId = currentIdx >= 0 ? STORY_SECTIONS[currentIdx].id : '';
   document.querySelectorAll('.nav-links a').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
   });
-});
+
+  const stepEl = document.getElementById('navSectionStep');
+  const labelEl = document.getElementById('navSectionLabel');
+  const fillEl = document.getElementById('navStoryProgressFill');
+  if (stepEl && labelEl && fillEl) {
+    if (currentIdx < 0) {
+      stepEl.textContent = `0/${STORY_SECTIONS.length}`;
+      labelEl.textContent = 'Introduction';
+      fillEl.style.width = '0%';
+    } else {
+      stepEl.textContent = `${currentIdx + 1}/${STORY_SECTIONS.length}`;
+      labelEl.textContent = STORY_SECTIONS[currentIdx].label;
+      fillEl.style.width = `${((currentIdx + 1) / STORY_SECTIONS.length) * 100}%`;
+    }
+  }
+}
+
+window.addEventListener('scroll', refreshStoryTracker);
+window.addEventListener('resize', refreshStoryTracker);
+window.addEventListener('load', refreshStoryTracker);
 
 // Reveal on scroll
 const revealObs = new IntersectionObserver(entries => {

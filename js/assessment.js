@@ -257,6 +257,9 @@ function refreshRadar(){
     rings+=`<polygon points="${pts}" fill="none" stroke="rgba(0,80,90,0.1)" stroke-width="0.7"/>`;
   });
   GL.forEach((_,i)=>{const a=(Math.PI*2*i/n)-Math.PI/2;axes+=`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*R}" y2="${cy+Math.sin(a)*R}" stroke="rgba(0,80,90,0.1)" stroke-width="0.7"/>`;});
+  const targetPts=GL.map((_,i)=>{const a=(Math.PI*2*i/n)-Math.PI/2,r=(4/5)*R;return`${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;}).join(' ');
+  const rt=document.getElementById('radarTarget');
+  if(rt) rt.innerHTML=`<polygon points="${targetPts}" fill="rgba(0,125,138,0.04)" stroke="rgba(0,125,138,0.45)" stroke-width="1.2" stroke-dasharray="4,3"/>`;
   const shapePts=GL.map((g,i)=>{const s=gScore(g.id)||0,a=(Math.PI*2*i/n)-Math.PI/2,r=(s/5)*R;return`${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;}).join(' ');
   GL.forEach((g,i)=>{
     const s=gScore(g.id),a=(Math.PI*2*i/n)-Math.PI/2;

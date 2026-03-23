@@ -28,8 +28,16 @@
       <li><a href="#reality-section">Execution Reality</a></li>
       <li><a href="#usecase-section">Use Cases</a></li>
       <li><a href="#approach-section">Our Approach</a></li>
+      <li class="nav-status" aria-live="polite">
+        <span class="nss-step" id="navSectionStep">0/6</span>
+        <span class="nss-sep">·</span>
+        <span class="nss-label" id="navSectionLabel">Introduction</span>
+      </li>
       <li><a href="#scan-section" class="nav-cta">Start Assessment</a></li>
     </ul>
+  </div>
+  <div class="nav-story-progress" aria-hidden="true">
+    <div class="nav-story-progress-fill" id="navStoryProgressFill"></div>
   </div>
 </nav>
 
@@ -610,7 +618,7 @@
     <div class="uc-panel active" id="ucp-0">
       <div class="uc-scenario-row">
         <div class="uc-scenario"><strong>Scenario 06</strong>An insurer has integrated "explainable" AI guidance to help claims professionals prioritize and route claims, identify next-best actions, and standardize handling.</div>
-        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant impact requiring stronger controls</span></span></div></div>
+        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact - No Additional Controls Required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant Impact - Requires stronger controls</span></span></div></div>
       </div>
       <div class="uc-matrix">
         <table class="uc-table">
@@ -671,7 +679,7 @@
     <div class="uc-panel" id="ucp-1">
       <div class="uc-scenario-row">
         <div class="uc-scenario"><strong>Scenario 07</strong>A bank outsources its customer contact centre to a third-party service provider — which relies on a fourth-party cloud-based CRM platform to store call recordings and customer data, and a fifth-party offshore IT support vendor to administer the system.</div>
-        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant impact requiring stronger controls</span></span></div></div>
+        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact - No Additional Controls Required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant Impact - Requires stronger controls</span></span></div></div>
       </div>
       <div class="uc-matrix">
         <table class="uc-table">
@@ -732,7 +740,7 @@
     <div class="uc-panel" id="ucp-2">
       <div class="uc-scenario-row">
         <div class="uc-scenario"><strong>Scenario 08</strong>Examining the impact of the 4 OSFI guidelines against the trade lifecycle to demonstrate where potential risk exposure may exist.</div>
-        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant impact requiring stronger controls</span></span></div></div>
+        <div class="uc-legend"><div class="uc-legend-title">Legend</div><div class="uc-legend-items"><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="uc-legend-text">Minimal impact - No Additional Controls Required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Medium impact — some additional controls or oversight required</span></span><span class="uc-legend-item"><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="risk-dot fill"></span><span class="uc-legend-text">Significant Impact - Requires stronger controls</span></span></div></div>
       </div>
       <div class="uc-matrix">
         <table class="uc-table">
@@ -1135,12 +1143,21 @@
           <div class="gbar-row"><span class="gbar-code">E-23</span><div class="gbar-track"><div class="gbar-fill" id="gb-e23" style="width:0%;background:var(--teal-mid)"></div></div><span class="gbar-val" id="gv-e23" style="color:var(--muted)">—</span></div>
         </div>
 
-        <div class="r-radar">
-          <svg id="radarSvg" width="200" height="200" viewBox="0 0 200 200">
-            <g id="radarRings"></g><g id="radarAxes"></g>
-            <polygon id="radarShape" fill="rgba(0,125,138,0.1)" stroke="rgba(0,125,138,0.5)" stroke-width="1.5" points="100,100 100,100 100,100 100,100"/>
-            <g id="radarDots"></g><g id="radarLabels"></g>
-          </svg>
+        <div class="r-section r-radar-section">
+          <div class="r-lbl">Guideline Maturity Map</div>
+          <div class="r-radar-sub">Your shape vs. supervisory readiness target</div>
+          <div class="r-radar">
+            <svg id="radarSvg" width="200" height="200" viewBox="0 0 200 200">
+              <g id="radarRings"></g><g id="radarAxes"></g>
+              <g id="radarTarget"></g>
+              <polygon id="radarShape" fill="rgba(0,125,138,0.1)" stroke="rgba(0,125,138,0.5)" stroke-width="1.5" points="100,100 100,100 100,100 100,100"/>
+              <g id="radarDots"></g><g id="radarLabels"></g>
+            </svg>
+          </div>
+          <div class="r-radar-legend">
+            <span class="r-radar-legend-item"><span class="r-radar-legend-swatch r-radar-swatch-score"></span>Your score</span>
+            <span class="r-radar-legend-item"><span class="r-radar-legend-swatch r-radar-swatch-target"></span>Target ≥ 4.0</span>
+          </div>
         </div>
 
         <div class="r-section">
