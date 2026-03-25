@@ -43,7 +43,6 @@ function qInScenario(q){
 function renderQuestions(){
   const mount=document.getElementById('questionsMount');
   let h='';
-  const totalQ=scanMode==='simple'?8:54;
   GL.forEach(g=>{
     const domainQs=g.domains.flatMap(d=>d.qs.filter(q=>scanMode==='simple'?q.simple:true));
     if(!domainQs.length) return;
@@ -91,7 +90,6 @@ function toggleWhy(qid){
 // SCORING
 // ═══════════════════════════════════════════
 function score(qid,val){
-  const prev=answers[qid];
   answers[qid]=val;
   const card=document.getElementById('qcard-'+qid);
   card.classList.add('scored');
@@ -128,7 +126,7 @@ function onProfile(){ refreshCompositeHeader(); refreshNarrative(); }
 // ═══════════════════════════════════════════
 // LIVE SIGNAL
 // ═══════════════════════════════════════════
-function refreshLiveSignal(qid,val){
+function refreshLiveSignal(_,val){
   const el=document.getElementById('liveSignal');
   if(!el) return;
   const cs=composite();
@@ -199,6 +197,11 @@ function refreshCompositeHeader(){
     badge.textContent=ML[lvl];
     badge.style.cssText=`color:${c};background:${c}15;border:1px solid ${c}40`;
   }
+  document.querySelectorAll('.ms-step').forEach(s=>{
+    const l=parseInt(s.dataset.lvl);
+    const active=cs!==null&&Math.round(cs)===l;
+    s.className='ms-step'+(active?' ms-active ms-'+l:'');
+  });
   const inst=document.getElementById('pInstitution')?.value;
   const role=document.getElementById('pRole')?.value;
   const exam=document.getElementById('pExam')?.value;
@@ -297,6 +300,16 @@ function refreshGaps(){
   const gaps=[];
   GL.forEach(g=>g.domains.forEach(d=>d.qs.filter(q=>(scanMode==='simple'?q.simple:true)&&qInScenario(q)).forEach(q=>{const s=answers[q.id];if(s&&s<=3) gaps.push({g,q,s});})));
   gaps.sort((a,b)=>a.s-b.s);
+  const hCount=gaps.filter(x=>x.s===1).length,mCount=gaps.filter(x=>x.s===2).length;
+  const gc=document.getElementById('gapsCount');
+  if(gc){
+    if(hCount+mCount>0){
+      gc.innerHTML=(hCount?`<span class="gc-high">${hCount} high</span>`:'')+
+        (hCount&&mCount?`<span class="gc-sep">·</span>`:'')+
+        (mCount?`<span class="gc-med">${mCount} medium</span>`:'');
+      gc.style.display='flex';
+    } else {gc.style.display='none';}
+  }
   if(!gaps.length){list.innerHTML='<p class="empty-note">Priority gaps appear here as you score questions ≤ 3</p>';return;}
   list.innerHTML=gaps.slice(0,12).map(({g,q,s})=>{
     const dc=s===1?'gap-dot-h':s===2?'gap-dot-m':'gap-dot-l';
@@ -310,7 +323,22 @@ function refreshNarrative(){
   const cs=composite();
   const el=document.getElementById('narrativeText');
   if(!el) return;
-  if(!cs){el.innerHTML='<em style="color:var(--muted)">Narrative generates automatically as you complete the assessment.</em>';return;}
+  const verdict=document.getElementById('rVerdict');
+  if(!cs){
+    el.innerHTML='<em style="color:var(--muted)">Narrative generates automatically as you complete the assessment.</em>';
+    if(verdict) verdict.style.display='none';
+    return;
+  }
+  if(verdict){
+    let vcls,vmsg;
+    if(cs<2.0){vcls='v-high';vmsg='⚠ Examination exposure is critical — foundational remediation required';}
+    else if(cs<3.0){vcls='v-medium';vmsg='⚡ Developing posture — structural gaps create near-term exam risk';}
+    else if(cs<4.0){vcls='v-defined';vmsg='↑ Defined across most domains — close the gap to Managed before examination';}
+    else{vcls='v-strong';vmsg='✓ Strong posture — focus on integration, automation, and evidence generation';}
+    verdict.className=`r-verdict ${vcls}`;
+    verdict.textContent=vmsg;
+    verdict.style.display='block';
+  }
   const inst=document.getElementById('pInstitution')?.value||'The institution';
   const lvl=Math.round(cs),label=ML[lvl]||'';
   const highGaps=activeQs().filter(q=>answers[q.id]===1).length;
@@ -328,10 +356,8 @@ function refreshNarrative(){
 // ═══════════════════════════════════════════
 // OUTLOOK — opens Outlook directly
 // ═══════════════════════════════════════════
-function openOutlook(){
-  const inst=document.getElementById('pInstitution')?.value||'';
+function buildEmailContent(){
   const role=document.getElementById('pRole')?.value||'';
-  const type=document.getElementById('pType')?.value||'';
   const exam=document.getElementById('pExam')?.value||'';
   const eng=document.getElementById('cEngagement')?.value||'';
   const timeline=document.getElementById('cTimeline')?.value||'';
@@ -339,52 +365,55 @@ function openOutlook(){
   const lvl=cs?ML[Math.round(cs)]:'Incomplete';
   const mode=scanMode==='simple'?'Simple Diagnostic (8 questions)':'In-Depth Assessment (54 questions)';
   const scoreLns=GL.map(g=>{const s=gScore(g.id);return`  ${g.code}: ${s?s.toFixed(1)+'/5 ('+ML[Math.round(s)]+')':'Not rated'}`;}).join('\n');
-  const gapLns=activeQs().filter(q=>answers[q.id]&&answers[q.id]<=2).map(q=>{const g=GL.find(x=>x.domains.some(d=>d.qs.includes(q)));return`  • [${g?.code}] ${q.ref} — ${answers[q.id]}/5`;}).slice(0,10).join('\n');
-  const noteLns=Object.entries(notes).map(([qid,n])=>{if(!n)return null;const q=activeQs().find(x=>x.id===qid);return q?`  • ${q.ref}: ${n}`:null;}).filter(Boolean).join('\n');
-
-  const to='advisory@yourfirm.ca';
-  const subj=encodeURIComponent(`OSFI Convergence Readiness — ${inst||'Inquiry'} — ${eng||'Connect'}`);
-  const body=encodeURIComponent(
+  const gapLns=activeQs().filter(q=>answers[q.id]&&answers[q.id]<=2).map(q=>{const g=GL.find(x=>x.domains.some(d=>d.qs.includes(q)));return`  - [${g?.code}] ${q.ref} -- ${answers[q.id]}/5`;}).slice(0,10).join('\n');
+  const noteLns=Object.entries(notes).map(([qid,n])=>{if(!n)return null;const q=activeQs().find(x=>x.id===qid);return q?`  - ${q.ref}: ${n}`:null;}).filter(Boolean).join('\n');
+  const body=
 `Hello,
 
-${role?(role+(inst?' at '+inst:'')):(inst||'Our team')} is requesting a conversation regarding OSFI compliance readiness${eng?' — specifically: '+eng:''}.
+${role||'Our team'} is requesting a conversation regarding OSFI compliance readiness${eng?' -- specifically: '+eng:''}.
 
-═══════════════════════════════════════════
 ASSESSMENT RESULTS
-═══════════════════════════════════════════
-Institution:      ${inst||'—'}
-Type:             ${type||'—'}
-Sponsor role:     ${role||'—'}
-Exam timeline:    ${exam||'—'}
+--------------------------------------------------
+Sponsor role:     ${role||'--'}
+Exam timeline:    ${exam||'--'}
 Mode:             ${mode}
 
-Composite Score:  ${cs?cs.toFixed(1)+'/5.0 — '+lvl:'Incomplete'}
+Composite Score:  ${cs?cs.toFixed(1)+'/5.0 -- '+lvl:'Incomplete'}
 
 By Guideline:
 ${scoreLns}
-${gapLns?'\nHigh/Medium Priority Gaps Identified:\n'+gapLns:''}
+${gapLns?'\nHigh/Medium Priority Gaps:\n'+gapLns:''}
 ${noteLns?'\nAssessor Notes:\n'+noteLns:''}
-═══════════════════════════════════════════
+
 ENGAGEMENT REQUEST
-═══════════════════════════════════════════
-Engagement:       ${eng||'—'}
-Timeline:         ${timeline||'—'}
+--------------------------------------------------
+Engagement:       ${eng||'--'}
+Timeline:         ${timeline||'--'}
 Assessment date:  ${new Date().toLocaleDateString('en-CA')}
-═══════════════════════════════════════════
+--------------------------------------------------
 
 We look forward to connecting.
 
-${role?(role+(inst?'\n'+inst:'')):(inst||'')}
-`);
-  // Target Outlook specifically via ms-outlook protocol, fall back to mailto
-  const outlookUrl=`ms-outlook://compose?to=${encodeURIComponent(to)}&subject=${subj}&body=${body}`;
-  const mailtoUrl=`mailto:${to}?subject=${subj}&body=${body}`;
-  // Try ms-outlook first (opens desktop Outlook), fall back to mailto
-  const a=document.createElement('a');
-  a.href=outlookUrl;
-  a.click();
-  // Fallback after short delay if ms-outlook not available
-  setTimeout(()=>{window.location.href=mailtoUrl;},500);
+${role||''}`;
+  return{role,eng,body};
+}
+
+function openOutlook(){
+  const{role,eng,body}=buildEmailContent();
+  const to='advisory@yourfirm.ca';
+  const subj=encodeURIComponent(`OSFI Convergence Readiness -- ${role||'Inquiry'} -- ${eng||'Connect'}`);
+  window.location.href=`mailto:${to}?subject=${subj}&body=${encodeURIComponent(body)}`;
+}
+
+function copyResults(){
+  const{body}=buildEmailContent();
+  const btn=document.getElementById('copyResultsBtn');
+  navigator.clipboard.writeText(body).then(()=>{
+    const orig=btn.innerHTML;
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    btn.style.background='var(--s4)';
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.background='';},2000);
+  });
 }
 
 // ═══════════════════════════════════════════
