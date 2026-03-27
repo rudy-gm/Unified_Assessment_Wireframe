@@ -201,16 +201,4 @@
 .narrative-text{font-size:11px;color:var(--body);line-height:1.75;padding:12px 14px;border-left:3px solid var(--teal);background:var(--white);}
 .narrative-text strong{color:var(--ink);}
 
-/* Connect */
-.r-connect{padding:16px 24px 28px;}
-.connect-field{width:100%;background:var(--white);border:1px solid var(--line);color:var(--ink);padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;margin-bottom:6px;}
-.connect-field:focus{border-color:var(--teal-mid);}
-.connect-field option{background:var(--white);}
-.connect-row2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;}
-.connect-btns{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:3px;}
-.connect-btn{background:var(--teal);color:#fff;padding:12px 18px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.04em;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.connect-btn:hover{background:var(--teal-mid);box-shadow:0 4px 16px rgba(0,125,138,0.25);}
-.connect-btn-copy{background:var(--white);color:var(--teal);border:1px solid var(--teal-border);padding:12px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;transition:all 0.2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.connect-btn-copy:hover{background:var(--teal-xlight);}
-.connect-hint{font-size:9px;color:var(--muted);text-align:center;margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.03em;}
 .empty-note{font-size:10px;color:var(--muted);font-style:italic;line-height:1.6;}

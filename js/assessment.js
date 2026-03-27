@@ -355,55 +355,6 @@ function refreshNarrative(){
 
 // ═══════════════════════════════════════════
 // OUTLOOK — opens Outlook directly
-// ═══════════════════════════════════════════
-function buildEmailContent(){
-  const role=document.getElementById('pRole')?.value||'';
-  const exam=document.getElementById('pExam')?.value||'';
-  const eng=document.getElementById('cEngagement')?.value||'';
-  const timeline=document.getElementById('cTimeline')?.value||'';
-  const cs=composite();
-  const lvl=cs?ML[Math.round(cs)]:'Incomplete';
-  const mode=scanMode==='simple'?'Simple Diagnostic (8 questions)':'In-Depth Assessment (54 questions)';
-  const scoreLns=GL.map(g=>{const s=gScore(g.id);return`  ${g.code}: ${s?s.toFixed(1)+'/5 ('+ML[Math.round(s)]+')':'Not rated'}`;}).join('\n');
-  const gapLns=activeQs().filter(q=>answers[q.id]&&answers[q.id]<=2).map(q=>{const g=GL.find(x=>x.domains.some(d=>d.qs.includes(q)));return`  - [${g?.code}] ${q.ref} -- ${answers[q.id]}/5`;}).slice(0,10).join('\n');
-  const noteLns=Object.entries(notes).map(([qid,n])=>{if(!n)return null;const q=activeQs().find(x=>x.id===qid);return q?`  - ${q.ref}: ${n}`:null;}).filter(Boolean).join('\n');
-  const body=
-`Hello,
-
-${role||'Our team'} is requesting a conversation regarding OSFI compliance readiness${eng?' -- specifically: '+eng:''}.
-
-ASSESSMENT RESULTS
---------------------------------------------------
-Sponsor role:     ${role||'--'}
-Exam timeline:    ${exam||'--'}
-Mode:             ${mode}
-
-Composite Score:  ${cs?cs.toFixed(1)+'/5.0 -- '+lvl:'Incomplete'}
-
-By Guideline:
-${scoreLns}
-${gapLns?'\nHigh/Medium Priority Gaps:\n'+gapLns:''}
-${noteLns?'\nAssessor Notes:\n'+noteLns:''}
-
-ENGAGEMENT REQUEST
---------------------------------------------------
-Engagement:       ${eng||'--'}
-Timeline:         ${timeline||'--'}
-Assessment date:  ${new Date().toLocaleDateString('en-CA')}
---------------------------------------------------
-
-We look forward to connecting.
-
-${role||''}`;
-  return{role,eng,body};
-}
-
-function openOutlook(){
-  const{role,eng,body}=buildEmailContent();
-  const to='advisory@yourfirm.ca';
-  const subj=encodeURIComponent(`OSFI Convergence Readiness -- ${role||'Inquiry'} -- ${eng||'Connect'}`);
-  window.location.href=`mailto:${to}?subject=${subj}&body=${encodeURIComponent(body)}`;
-}
 
 function copyResults(){
   const{body}=buildEmailContent();
