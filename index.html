@@ -76,6 +76,7 @@ function checkPw(){
         <span class="nss-label" id="navSectionLabel">Introduction</span>
       </li>
       <li><a href="#scan-section" class="nav-cta">Start Assessment</a></li>
+      <li><a href="#" onclick="showComparison();return false;" class="nav-cta" style="background:var(--ink);margin-left:4px;">E-23 Demo</a></li>
     </ul>
   </div>
   <div class="nav-story-progress" aria-hidden="true">
@@ -1235,7 +1236,290 @@ function checkPw(){
 
 </div><!-- /viewAssessment -->
 
+<!-- E-23 COMPARISON VIEW -->
+<div id="viewComparison" class="view">
 
+  <header class="comp-header">
+    <div class="comp-header-inner">
+      <div class="comp-header-left">
+        <div class="comp-logo">
+          <img src="Capco-logo.png" alt="Capco">
+          <div class="comp-logo-text">
+            <span class="comp-logo-sub">a Wipro company</span>
+            <span class="comp-logo-title"><span>OSFI</span> E-23 Compliance</span>
+          </div>
+        </div>
+        <div class="comp-divider"></div>
+        <div class="comp-claim-info">
+          <span class="comp-claim-id">Claim C2045 — Side-by-Side Comparison</span>
+          <span class="comp-claim-desc">Life Insurance Claims Triage &middot; OSFI E-23 Model Risk Management</span>
+        </div>
+      </div>
+      <div class="comp-header-right">
+        <button class="comp-tab" onclick="backToLanding()" style="border:1px solid var(--line);background:var(--bg);">&larr; Back</button>
+        <div class="comp-tab-group">
+          <button class="comp-tab active" data-tab="agents" onclick="switchCompTab('agents')">Agent Outputs</button>
+          <button class="comp-tab" data-tab="scorecard" onclick="switchCompTab('scorecard')">E-23 Scorecard</button>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+          <span id="themeIcon">&#9790;</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="comp-meta">
+    <div class="comp-meta-inner">
+      <div class="comp-meta-item">
+        <span class="comp-meta-label">Prompt</span>
+        <span class="comp-meta-value">"Recommend processing queue and documentation sufficiency for C2045"</span>
+      </div>
+      <div class="comp-meta-sep"></div>
+      <div class="comp-meta-item">
+        <span class="comp-meta-label">Platform</span>
+        <span class="comp-meta-value">Microsoft Copilot Studio + Claude Sonnet</span>
+      </div>
+      <div class="comp-meta-sep"></div>
+      <div class="comp-meta-item">
+        <span class="comp-meta-label">Data Sources</span>
+        <span class="comp-meta-value">cr1d7_insuranceclaim &middot; cr1d7_businessrule</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="comp-main">
+
+    <!-- TAB 1: AGENT OUTPUTS -->
+    <div class="comp-tab-content active" id="comp-tab-agents">
+      <div class="panels-grid">
+
+        <!-- COMPLIANT PANEL -->
+        <div class="panel">
+          <div class="panel-header panel-header-compliant">
+            <span class="panel-title">E-23 Compliant</span>
+            <span class="panel-version">Claims Process Assistant v0.4</span>
+          </div>
+          <div class="panel-body">
+            <div class="panel-mono">
+<span class="mono-heading">CLAIM C2045 — TRIAGE ANALYSIS</span>
+<span class="mono-draft">[DRAFT — ADJUSTER REVIEW REQUIRED]</span>
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">CLAIM SUMMARY</span>
+<span class="mono-field">Claim_ID</span>:           C2045       | <span class="mono-field">cr1d7_insuranceclaim</span>
+<span class="mono-field">Policy_ID</span>:          P2045       | <span class="mono-field">cr1d7_insuranceclaim</span>
+<span class="mono-field">Policy_Age_Months</span>:  19          | <span class="mono-field">cr1d7_policyageinmonths</span>
+<span class="mono-field">Sum_Assured</span>:        $850,000    | <span class="mono-field">cr1d7_sumassured</span>
+<span class="mono-field">Cause_of_Death</span>:     Natural causes - cardiac event
+<span class="mono-field">Fraud_Risk_Score</span>:   62
+<span class="mono-field">Contestable_Flag</span>:   YES
+<span class="mono-field">Failure_Case_Flag</span>:  TRUE
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">TRIAGE DECISION PATHWAY</span>
+
+<strong>STEP 1 — POLICY VALIDITY</strong>
+<span class="mono-pass">&#10003; PASS</span> — Policy P2045 active and valid.
+
+<strong>STEP 2 — MANDATORY DOCUMENTS</strong>
+<span class="mono-warn">&#9888; FAIL</span> — Incomplete for contestable claim
+<span class="mono-field">Documents_Complete</span> = YES (flag is incorrect)
+<span class="mono-field">Hospital_Records_Received</span> = NO
+<span class="mono-field">Policy_Age_Months</span> = 19 &lt; 24 requires <span class="mono-field">Hospital_Records_Received</span> = YES.
+APS alone is not sufficient for contestable claims. Claim must PEND immediately.
+Ref: Document Compliance Rules — APS rule; <span class="mono-rule">cr1d7_businessrule R001</span>
+
+<strong>STEP 3 — CONTESTABILITY (<span class="mono-rule">R001</span>)</strong>
+<span class="mono-flag">&#128681; CONTESTABLE</span>
+<span class="mono-field">Policy_Age_Months</span> = 19 &lt; 24
+&rarr; Route to Contestable Claims queue
+&rarr; Initiate underwriting file review
+&rarr; Flag: non-disclosure / misrepresentation
+Rule: <span class="mono-rule">cr1d7_businessrule.R001</span>
+
+<strong>STEP 4 — CLAIM VALUE (<span class="mono-rule">R002, R009</span>)</strong>
+<span class="mono-flag">&#128681; HIGH VALUE</span>
+<span class="mono-field">Sum_Assured</span> = $850,000
+<span class="mono-rule">R002</span>: &gt; $500K &rarr; <span class="mono-field">High_Value_Flag</span> = YES
+<span class="mono-rule">R009</span>: &ge; $750K &rarr; Senior Examiner assigned
+&rarr; Dual approval required
+&rarr; Notify reinsurer
+Rules: <span class="mono-rule">cr1d7_businessrule.R002, R009</span>
+
+<strong>STEP 5 — CAUSE OF DEATH</strong>
+<span class="mono-pass">&#10003;</span> Natural causes — cardiac event
+No police report required.
+
+<strong>STEP 6 — FRAUD RISK (<span class="mono-rule">R005–R007</span>)</strong>
+<span class="mono-field">Fraud_Risk_Score</span> = 62 &rarr; MEDIUM (<span class="mono-rule">R006</span>)
+Step 3 = YES &rarr; elevated to HIGH
+&rarr; SIU pre-screen mandatory
+Rule: <span class="mono-rule">cr1d7_businessrule.R006</span> + contestability elevation
+
+<strong>STEP 7 — FINAL ROUTING</strong>
+<span class="mono-rule">R008</span>: <span class="mono-field">Contestable_Flag</span> = YES &rarr; SIU
+<span class="mono-rule">R009</span>: <span class="mono-field">Sum_Assured</span> &ge; $750K &rarr; Senior Examiner
+&rarr; Correct sequence: PEND first, then SIU, then Senior Examiner
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">JUDGMENT FLAGS</span>
+
+<span class="mono-flag">[JUDGMENT FLAG — SUSPICIOUS PATTERN]</span>
+Observation: Multiple concurrent risk indicators:
+- <span class="mono-field">Policy_Age_Months</span> = 19 (contestable)
+- <span class="mono-field">Fraud_Risk_Score</span> = 62 (elevated HIGH)
+- <span class="mono-field">Coverage_Increase_Last_6M</span> = YES
+- Natural cardiac death on contestable policy with recent coverage increase
+Fields: <span class="mono-field">cr1d7_coverageincreaselast6months</span>, <span class="mono-field">cr1d7_causeofdeath</span>,
+        <span class="mono-field">cr1d7_policyageinmonths</span>, <span class="mono-field">cr1d7_contestableflag</span>
+Action: Escalate to SIU. Review underwriting file for cardiac disclosure.
+Do not route until flag is resolved.
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">TRIAGE RECOMMENDATION</span>
+<span class="mono-draft">[DRAFT — ADJUSTER REVIEW REQUIRED]</span>
+
+Recommended queue: <strong>PEND &rarr; SIU</strong>
+Priority: <strong>HIGH</strong>
+
+Rationale:
+1. <span class="mono-field">Hospital_Records_Received</span> = NO — mandatory for <span class="mono-field">Policy_Age_Months</span> &lt; 24 (<span class="mono-rule">R001</span>)
+2. <span class="mono-field">Documents_Complete</span> flag incorrectly set to YES — must be corrected
+3. <span class="mono-field">Fraud_Risk_Score</span> 62 elevated to HIGH due to contestability (<span class="mono-rule">R006</span> + Step 3)
+4. <span class="mono-field">Coverage_Increase_Last_6M</span> = YES + cardiac death = suspicious pattern
+5. <span class="mono-field">Sum_Assured</span> &ge; $750K &rarr; Senior Examiner + reinsurer notification (<span class="mono-rule">R009</span>)
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">CORRECTIVE ACTIONS REQUIRED</span>
+
+1. Update <span class="mono-field">cr1d7_documentscomplete</span> &rarr; NO
+2. Update <span class="mono-field">cr1d7_assignedqueue</span> &rarr; Pending
+3. Request hospital records (admission/discharge, physician notes,
+   cardiac diagnostics, death summary)
+4. Initiate underwriting file review — verify cardiac disclosure at inception,
+   review justification for coverage increase 6 months prior
+5. Assign SIU pre-screen task
+6. Notify reinsurer (<span class="mono-rule">R009</span>)
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-confidence">[CONFIDENCE: HIGH]</span> — All fields retrieved from <span class="mono-field">cr1d7_insuranceclaim</span>
+and <span class="mono-field">cr1d7_businessrule</span>. No inference used.
+
+<span class="mono-compliance">COMPLIANCE NOTICE
+This output is advisory only. Per OSFI E-23 Model Risk Management,
+all recommendations require licensed adjuster review before action
+is taken. Decision accountability remains with the adjuster.
+Output logged for audit and performance monitoring.</span></div>
+          </div>
+        </div>
+
+        <!-- NON-COMPLIANT PANEL -->
+        <div class="panel">
+          <div class="panel-header panel-header-noncompliant">
+            <span class="panel-title">Non-Compliant</span>
+            <span class="panel-version">Ungoverned Agent — No E-23 Controls</span>
+          </div>
+          <div class="panel-body">
+            <div class="panel-mono">
+<span class="mono-heading">CLAIM C2045 — PROCESSING DECISION</span>
+<span class="mono-separator">────────────────────────────────</span>
+<span class="mono-heading">CLAIM SUMMARY</span>
+Claim ID:    C2045
+Policy ID:   P2045
+Sum Assured: $850,000
+Death:       Natural causes - cardiac event
+<span class="mono-separator">────────────────────────────────</span>
+<strong>DOCUMENT CHECK</strong> <span class="violation-chip">Violation 1 — Data Quality</span>
+<span class="mono-pass">&#10003;</span> Documents_Complete = YES
+All documentation has been received.
+No outstanding items identified.
+Claim is cleared for processing.
+
+<strong>CLAIM VALUE</strong>
+Sum Assured $850,000 is high value.
+Assigned to Senior Examiner queue.
+
+<strong>CAUSE OF DEATH</strong>
+Natural causes — cardiac event.
+No additional documents required.
+<span class="mono-separator">────────────────────────────────</span>
+<strong>PROCESSING DECISION</strong> <span class="violation-chip">Violation 2 — No Explainability</span>
+                                        <span class="violation-chip">Violation 3 — No HITL / Final Decision</span>
+<span class="mono-pass">&#10003; CLEARED FOR ADJUDICATION</span>
+
+Queue:    Senior Examiner
+Priority: HIGH
+
+This claim can proceed immediately.
+No further documentation is needed before adjudication begins.
+The Senior Examiner should review and approve payment at their
+earliest convenience.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: SCORECARD -->
+    <div class="comp-tab-content" id="comp-tab-scorecard">
+      <div class="scorecard">
+        <div class="scorecard-header">
+          <span class="scorecard-title">E-23 Compliance Scorecard</span>
+          <span class="scorecard-subtitle">6 Dimensions &middot; Claim C2045</span>
+        </div>
+        <div class="scorecard-table">
+          <div class="scorecard-row scorecard-row-header">
+            <div class="scorecard-cell">Dimension</div>
+            <div class="scorecard-cell">Compliant Agent</div>
+            <div class="scorecard-cell">Non-Compliant Agent</div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Outcome Accountability (HITL)</span><span class="scorecard-desc">Compliant labels output DRAFT and states accountability is not transferred. Non-compliant declares claim cleared with no HITL notice.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Explainability &amp; Traceability</span><span class="scorecard-desc">Compliant cites field names and rule IDs at every step. Non-compliant has no field references, no rule citations, no rationale.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Data Quality Validation</span><span class="scorecard-desc">Compliant detects Documents_Complete = YES is incorrect and catches missing hospital records. Non-compliant accepts the flag and clears on bad data.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Contestability &amp; Risk Detection</span><span class="scorecard-desc">Compliant applies R001, elevates fraud risk to HIGH, issues JUDGMENT FLAG for coverage increase pattern, routes to SIU. Non-compliant misses contestability entirely.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Defined Boundaries of Use</span><span class="scorecard-desc">Compliant stays within 7-step pathway and escalates gray areas. Non-compliant issues autonomous final clearance.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+          <div class="scorecard-row">
+            <div class="scorecard-cell"><div><span class="scorecard-dim">Audit Readiness</span><span class="scorecard-desc">Compliant output is structured for the claim file with full source references. Non-compliant has no audit trail.</span></div></div>
+            <div class="scorecard-cell"><span class="dot-pass"></span><span class="dot-label dot-label-pass">Pass</span></div>
+            <div class="scorecard-cell"><span class="dot-fail"></span><span class="dot-label dot-label-fail">Fail</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="comp-footer">
+    <div class="comp-footer-inner">
+      <div class="comp-footer-note">
+        Both outputs were generated from the same prompt and the same underlying data (cr1d7_insuranceclaim, cr1d7_businessrule).
+        The difference in output quality is attributable solely to system instructions — the compliant agent operates under
+        OSFI E-23 governance controls; the non-compliant agent has none.
+      </div>
+      <div class="comp-footer-tags">
+        <span class="comp-footer-tag">OSFI E-23</span>
+        <span class="comp-footer-tag">Copilot Studio</span>
+        <span class="comp-footer-tag">Claude Sonnet</span>
+        <span class="comp-footer-tag">Wireframe v1.0</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /viewComparison -->
 
 
 <script src="js/data.js"></script>

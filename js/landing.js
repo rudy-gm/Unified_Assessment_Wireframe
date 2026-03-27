@@ -120,6 +120,27 @@ function backToLanding() {
   window.scrollTo(0, 0);
 }
 
+// E-23 Comparison view
+function showComparison() {
+  showView('viewComparison');
+  window.scrollTo(0, 0);
+}
+
+function switchCompTab(tab) {
+  document.querySelectorAll('.comp-tab[data-tab]').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.comp-tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.comp-tab[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(`comp-tab-${tab}`).classList.add('active');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';
+}
+
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
   const el = document.getElementById(id);
